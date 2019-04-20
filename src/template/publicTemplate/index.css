@@ -1,0 +1,9 @@
+body {
+  background: #dadada !important;
+}
+
+body > div,
+body > div > div,
+body > div > div > div.login-form {
+  height: 100%;
+}
