@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { Button, Form, Grid, Header, Image, Message, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import { Formik } from "formik";
 
 import logo from "../../logo.png";
+import api from "../../services/api";
+import { serverErrorsToFormErrors } from "../../helpers/messages";
 
 class Login extends Component {
   render() {
@@ -12,16 +15,70 @@ class Login extends Component {
           <Header as="h2" color="teal" textAlign="center">
             <Image src={logo} /> Log-in to your account
           </Header>
-          <Form size="large">
-            <Segment stacked>
-              <Form.Input fluid icon="user" iconPosition="left" placeholder="E-mail address" />
-              <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validate={values => {
+              let errors = {};
+              if (!values.email) {
+                errors.email = "Required";
+              } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+                errors.email = "Invalid email address";
+              }
+              if (!values.password) {
+                errors.password = "Required";
+              }
+              return errors;
+            }}
+            onSubmit={async (values, { setSubmitting, setErrors }) => {
+              try {
+                await api.post("login", values);
+                setSubmitting(false);
+              } catch (e) {
+                setSubmitting(false);
+                setErrors(serverErrorsToFormErrors(e.response));
+              }
+            }}
+          >
+            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, isValid }) => (
+              <Form size="large" onSubmit={handleSubmit} loading={isSubmitting} error={!isValid}>
+                <Segment stacked>
+                  <Form.Input
+                    fluid
+                    icon="user"
+                    iconPosition="left"
+                    placeholder="E-mail addres"
+                    type="email"
+                    id="email"
+                    autoComplete="off"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.email}
+                    error={errors.email && touched.email}
+                  />
+                  {errors.email && touched.email && <Message error content={errors.email} />}
 
-              <Button color="teal" fluid size="large">
-                Login
-              </Button>
-            </Segment>
-          </Form>
+                  <Form.Input
+                    fluid
+                    icon="lock"
+                    iconPosition="left"
+                    placeholder="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="off"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
+                    error={errors.password && touched.password}
+                  />
+                  {errors.password && touched.password && <Message error content={errors.password} />}
+                  <Button color="teal" fluid size="large" type="submit" disabled={!isValid && !errors.general}>
+                    Login
+                  </Button>
+                  {errors.general && <Message error header={errors.general.title} content={errors.general.message} />}
+                </Segment>
+              </Form>
+            )}
+          </Formik>
           <Message>
             New to us? <Link to="/sign-up">Sign Up</Link>
           </Message>
