@@ -3,11 +3,20 @@ import { Button, Form, Grid, Header, Image, Message, Segment } from "semantic-ui
 import { Link } from "react-router-dom";
 import { Formik } from "formik";
 
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { login } from "./action";
+
 import logo from "../../logo.png";
 import api from "../../services/api";
 import { serverErrorsToFormErrors } from "../../helpers/messages";
 
 class Login extends Component {
+  componentWillMount() {
+    const { auth } = this.props;
+    console.log(auth);
+  }
+
   render() {
     return (
       <Grid textAlign="center" style={{ height: "100%" }} verticalAlign="middle">
@@ -16,7 +25,7 @@ class Login extends Component {
             <Image src={logo} /> Log-in to your account
           </Header>
           <Formik
-            initialValues={{ email: "", password: "" }}
+            initialValues={{ email: "teste@teste.com", password: "teste" }}
             validate={values => {
               let errors = {};
               if (!values.email) {
@@ -30,13 +39,16 @@ class Login extends Component {
               return errors;
             }}
             onSubmit={async (values, { setSubmitting, setErrors }) => {
-              try {
-                await api.post("login", values);
-                setSubmitting(false);
-              } catch (e) {
-                setSubmitting(false);
-                setErrors(serverErrorsToFormErrors(e.response));
-              }
+              // try {
+              //   await api.post("login", values);
+              //   setSubmitting(false);
+              // } catch (e) {
+              //   setSubmitting(false);
+              //   setErrors(serverErrorsToFormErrors(e.response));
+              // }
+
+              const { login } = this.props;
+              login(values);
             }}
           >
             {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, isValid }) => (
@@ -88,4 +100,16 @@ class Login extends Component {
   }
 }
 
-export default Login;
+// export default Login;
+
+const mapStateToProps = state => ({
+  auth: state
+});
+
+// const mapStateToProps = state => ({ tab: state.tab });
+
+const mapDispatchToProps = dispatch => bindActionCreators({ login }, dispatch);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Login);
