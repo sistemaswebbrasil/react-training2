@@ -1,12 +1,11 @@
-import api from './api';
+import api from "./api";
 
-export const TOKEN_KEY = '_training_user_key_';
+export const TOKEN_KEY = "_training_user_key_";
 
 export const isAuthenticated = () => localStorage.getItem(TOKEN_KEY) !== null;
 
 export const getToken = () => {
-  const { token } = JSON.parse(localStorage.getItem(TOKEN_KEY)) || '';
-  return token;
+  return JSON.parse(localStorage.getItem(TOKEN_KEY)) || "";
 };
 
 export const login = token => {
@@ -19,7 +18,7 @@ export const logout = () => {
 
 export const validateToken = async () => {
   try {
-    const { data } = await api.get('profile');
+    const { data } = await api.get("profile");
     return data;
   } catch (e) {
     throw Error(e);

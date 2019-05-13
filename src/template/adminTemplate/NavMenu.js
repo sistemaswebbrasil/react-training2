@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { Menu } from "semantic-ui-react";
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { connect } from "react-redux";
+
+import { logoutRequest } from "../../pages/login/actions";
 
 class NavMenu extends Component {
   render() {
@@ -13,11 +16,18 @@ class NavMenu extends Component {
         <Menu.Item name="Users" replace as={NavLink} to="/users" activeClassName="active" />
         <Menu.Item name="About" replace as={NavLink} to="/about" activeClassName="active" />
         <Menu.Menu position="right">
-          <Menu.Item name="logout" as={NavLink} to="/login" />
+          <Menu.Item name="logout" onClick={this.props.logoutRequest} />
         </Menu.Menu>
       </Menu>
     );
   }
 }
 
-export default withRouter(NavMenu);
+const mapDispatchToProps = {
+  logoutRequest
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(NavMenu);
