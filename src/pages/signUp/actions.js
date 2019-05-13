@@ -1,8 +1,9 @@
-const REGISTER_USER = "REGISTER_USER";
+import { REGISTER_REQUESTING } from "./constants";
 
-export const registerUserAction = user => {
+export const registerRequest = payload => {
+  console.log(payload);
   return {
-    type: REGISTER_USER,
-    user
+    type: REGISTER_REQUESTING,
+    payload
   };
 };

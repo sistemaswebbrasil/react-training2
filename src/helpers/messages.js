@@ -22,7 +22,7 @@ export const serverErrorsToFormErrors = response => {
       return errorObject;
     default:
       Object.assign(errorObject, {
-        general: { message: response.data, title: response.data }
+        general: { message: response.data.error.message, title: response.statusText }
       });
       return errorObject;
   }
