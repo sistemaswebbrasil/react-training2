@@ -1,4 +1,15 @@
-import { REGISTER_REQUESTING, REGISTER_SUCCESS, REGISTER_ERROR, RESET_APP } from "./constants";
+import {
+  REGISTER_REQUESTING,
+  REGISTER_SUCCESS,
+  REGISTER_ERROR,
+  RESET_APP,
+  IS_UNIQUE_USERNAME_REQUESTING,
+  IS_UNIQUE_USERNAME_SUCCESS,
+  IS_UNIQUE_USERNAME_ERROR,
+  IS_UNIQUE_EMAIL_REQUESTING,
+  IS_UNIQUE_EMAIL_SUCCESS,
+  IS_UNIQUE_EMAIL_ERROR
+} from "./constants";
 
 const initialState = {
   requesting: false,
@@ -39,6 +50,60 @@ const reducer = function loginReducer(state = initialState, action) {
         status: action.status,
         successful: false
       };
+
+    case IS_UNIQUE_USERNAME_REQUESTING:
+      return {
+        requesting: true,
+        successful: false,
+        messages: [{ body: "searching ...", time: new Date() }],
+        errors: state.errors
+      };
+
+    case IS_UNIQUE_USERNAME_SUCCESS:
+      return {
+        errors: [],
+        messages: [],
+        requesting: false,
+        successful: false
+      };
+
+    case IS_UNIQUE_USERNAME_ERROR:
+      // console.warn(state);
+      return {
+        errors: [...state.errors, action.message],
+        messages: [],
+        requesting: false,
+        status: action.status,
+        successful: false
+      };
+
+    case IS_UNIQUE_EMAIL_REQUESTING:
+      // console.warn(state);
+      return {
+        requesting: true,
+        successful: false,
+        messages: [{ body: "searching ...", time: new Date() }],
+        errors: state.errors
+      };
+
+    case IS_UNIQUE_EMAIL_SUCCESS:
+      return {
+        errors: [],
+        messages: [],
+        requesting: false,
+        successful: false
+      };
+
+    case IS_UNIQUE_EMAIL_ERROR:
+      // console.log(state);
+      return {
+        errors: [...state.errors, action.message],
+        messages: [],
+        requesting: false,
+        status: action.status,
+        successful: false
+      };
+
     default:
       return state;
   }

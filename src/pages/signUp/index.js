@@ -6,7 +6,7 @@ import { Formik } from "formik";
 import Yup from "yup";
 
 import logo from "../../logo.png";
-import { registerRequest } from "./actions";
+import { registerRequest, findByUserNameRequest, findByEmailRequest } from "./actions";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string()
@@ -24,15 +24,48 @@ const validationSchema = Yup.object().shape({
 });
 
 class SignUp extends Component {
+  /*
+  componentDidUpdate() {
+    const {
+      register: { errors }
+    } = this.props;
+
+    // console.log(errors);
+
+    if (errors.length > 0) {
+      errors.forEach(value => {
+        // this.form.setErrors(value);
+        // console.log(Object.keys(value)); // console: ['0', '1', '2']
+        // console.log(Object.value(value)); // console: ['0', '1', '2']
+
+        for (var [key, val] of Object.entries(value)) {
+          // console.log("key:" + key + " value: " + val); // "a 5", "b 7", "c 9"
+
+          this.form.setFieldError(key, val);
+        }
+
+        // this.form.setFieldError(value);
+      });
+    }
+
+    // this.form.setFieldError("email", "error");
+
+    // this.form.setErrors(errors);
+  }
+  */
+
   render() {
     const { register } = this.props;
+
     return (
       <Grid textAlign="center" style={{ height: "100%" }} verticalAlign="middle">
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h2" color="teal" textAlign="center">
             <Image src={logo} /> Sign Up
           </Header>
+
           <Formik
+            ref={el => (this.form = el)}
             initialValues={{
               username: `teste`,
               email: `teste@teste.com`,
@@ -41,18 +74,34 @@ class SignUp extends Component {
             }}
             // initialValues={{ email: "", password: "" }}
             validationSchema={validationSchema}
-            onSubmit={async (values, { setErrors, isValid, resetForm }) => {
-              this.props.registerRequest({ values, setErrors, isValid });
+            onSubmit={async (values, { setErrors }) => {
+              this.props.registerRequest({ values, setErrors });
             }}
           >
-            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid, dirty }) => (
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isValid,
+              dirty,
+              setFieldValue,
+              setErrors,
+              setFieldError,
+              setStatus,
+              status
+            }) => (
               <Form
                 size="large"
                 onSubmit={handleSubmit}
                 loading={registerRequest.requesting}
-                error={errors ? true : false}
+                // error={errors ? true : false}
+                error
               >
                 <Segment stacked>
+                  <h1>{JSON.stringify(register.errors)}</h1>
                   <Form.Input
                     fluid
                     icon="user"
@@ -62,10 +111,28 @@ class SignUp extends Component {
                     id="username"
                     autoComplete="off"
                     onChange={handleChange}
-                    onBlur={handleBlur}
+                    // onBlur={handleBlur}
+                    // onChange={e => {
+                    //   const { value } = e.target;
+                    //   console.warn(value);
+                    //   if (value.length >= 5) {
+                    //     this.props.findByUserNameRequest({ value, setErrors, setFieldError, setStatus });
+                    //   }
+                    //   setFieldValue("username", e.target.value);
+                    // }}
+                    onBlur={e => {
+                      const { value } = e.target;
+                      this.props.findByUserNameRequest({ value, setErrors, setFieldError, setStatus });
+                      // console.log("#######");
+                      // console.log(e);
+                      // console.log(value);
+                    }}
                     value={values.username}
                     error={errors.username && touched.username}
+                    autoFocus
                   />
+                  {errors.username && <Message error content={errors.username} />}
+                  <h1>{JSON.stringify(errors)}</h1>
                   <Form.Input
                     fluid
                     icon="mail"
@@ -75,11 +142,22 @@ class SignUp extends Component {
                     id="email"
                     autoComplete="off"
                     onChange={handleChange}
-                    onBlur={handleBlur}
+                    // onChange={e => {
+                    //   const { value } = e.target;
+                    //   if (value.length >= 5) {
+                    //     this.props.findByEmailRequest({ value, setErrors, setStatus });
+                    //   }
+                    //   setFieldValue("email", e.target.value);
+                    // }}
+                    // onBlur={handleBlur}
+                    onBlur={e => {
+                      const { value } = e.target;
+                      this.props.findByEmailRequest({ value, setErrors, setStatus });
+                    }}
                     value={values.email}
                     error={errors.email && touched.email}
                   />
-                  {errors.email && touched.email && <Message error content={errors.email} />}
+                  {errors.email && <Message error content={errors.email} />}
                   <Form.Input
                     fluid
                     icon="lock"
@@ -119,6 +197,7 @@ class SignUp extends Component {
                   >
                     Register
                   </Button>
+                  <h1>{JSON.stringify(status)}</h1>
                   {errors.general && <Message error header={errors.general.title} content={errors.general.message} />}
                   {register.successful && (
                     <Message positive>
@@ -146,7 +225,9 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  registerRequest
+  registerRequest,
+  findByUserNameRequest,
+  findByEmailRequest
 };
 
 export default connect(
