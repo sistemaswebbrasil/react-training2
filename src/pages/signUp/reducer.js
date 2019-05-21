@@ -61,16 +61,15 @@ const reducer = function loginReducer(state = initialState, action) {
 
     case IS_UNIQUE_USERNAME_SUCCESS:
       return {
-        errors: [],
+        errors: state.errors,
         messages: [],
         requesting: false,
         successful: false
       };
 
     case IS_UNIQUE_USERNAME_ERROR:
-      // console.warn(state);
       return {
-        errors: [...state.errors, action.message],
+        errors: action.message,
         messages: [],
         requesting: false,
         status: action.status,
@@ -78,7 +77,6 @@ const reducer = function loginReducer(state = initialState, action) {
       };
 
     case IS_UNIQUE_EMAIL_REQUESTING:
-      // console.warn(state);
       return {
         requesting: true,
         successful: false,
@@ -88,16 +86,15 @@ const reducer = function loginReducer(state = initialState, action) {
 
     case IS_UNIQUE_EMAIL_SUCCESS:
       return {
-        errors: [],
         messages: [],
         requesting: false,
-        successful: false
+        successful: false,
+        errors: state.errors
       };
 
     case IS_UNIQUE_EMAIL_ERROR:
-      // console.log(state);
       return {
-        errors: [...state.errors, action.message],
+        errors: action.message,
         messages: [],
         requesting: false,
         status: action.status,

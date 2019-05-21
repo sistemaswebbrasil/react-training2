@@ -1,4 +1,5 @@
 import { call, put, takeLatest, delay } from "redux-saga/effects";
+import _ from "lodash";
 
 import api from "../../services/api";
 import {
@@ -28,7 +29,7 @@ function isUniqueEmailApi(values) {
 }
 
 function* fetchRegister(action) {
-  const { setErrors, values } = action.payload;
+  const { setStatus, values } = action.payload;
   try {
     const { data } = yield call(registerApi, values);
     yield put({ type: REGISTER_SUCCESS, user: data });
@@ -42,14 +43,13 @@ function* fetchRegister(action) {
       message: serverErrorsToFormErrors(response),
       status: response ? response.status : 503
     });
-    yield call(setErrors, serverErrorsToFormErrors(e.response));
+    yield call(setStatus, serverErrorsToFormErrors(e.response));
   }
 }
 
 function* fetchFindByUserName(action) {
-  // console.log(action);
-  const isNotUniqueMsg = { username: "0This user name is already being used" };
-  const { setErrors, setFieldError, setStatus, value } = action.payload;
+  const isNotUniqueMsg = { username: "This user name is already being used" };
+  const { setStatus, value, status } = action.payload;
   try {
     yield call(isUniqueUsernameApi, value);
     yield put({
@@ -57,48 +57,47 @@ function* fetchFindByUserName(action) {
       message: isNotUniqueMsg,
       status: 422
     });
-    // console.log(setFieldError);
-    yield call(setFieldError, isNotUniqueMsg);
-    yield call(setErrors, isNotUniqueMsg);
-    yield call(setStatus, isNotUniqueMsg);
+    yield call(setStatus, { ...status, ...isNotUniqueMsg });
   } catch (e) {
     const { response } = e;
     if (response.status === 404) {
       yield put({ type: IS_UNIQUE_USERNAME_SUCCESS });
+      yield call(setStatus, _.omit(status, "username"));
     } else {
       yield put({
         type: IS_UNIQUE_USERNAME_ERROR,
         message: serverErrorsToFormErrors(response),
         status: response ? response.status : 503
       });
-      yield call(setErrors, serverErrorsToFormErrors(response));
+      yield call(setStatus, serverErrorsToFormErrors(response));
     }
   }
 }
 
 function* fetchFindByEmail(action) {
   const isNotUniqueMsg = { email: "This email is already being used" };
-  const { setErrors, setStatus, value } = action.payload;
+  const { setStatus, value, status } = action.payload;
+  const statusMsg = { ...status, ...isNotUniqueMsg };
   try {
     yield call(isUniqueEmailApi, value);
+    yield call(setStatus, statusMsg);
     yield put({
       type: IS_UNIQUE_EMAIL_ERROR,
-      message: isNotUniqueMsg,
+      message: statusMsg,
       status: 422
     });
-    yield call(setErrors, isNotUniqueMsg);
-    yield call(setStatus, isNotUniqueMsg);
   } catch (e) {
     const { response } = e;
     if (response.status === 404) {
       yield put({ type: IS_UNIQUE_EMAIL_SUCCESS });
+      yield call(setStatus, _.omit(status, "email"));
     } else {
       yield put({
         type: IS_UNIQUE_EMAIL_ERROR,
         message: serverErrorsToFormErrors(response),
         status: response ? response.status : 503
       });
-      yield call(setErrors, serverErrorsToFormErrors(response));
+      yield call(setStatus, serverErrorsToFormErrors(response));
     }
   }
 }
