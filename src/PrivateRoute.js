@@ -5,22 +5,26 @@ import AdminTemplate from "./template/adminTemplate";
 
 function PrivateRoute({ component: Component, login, ...rest }) {
   return (
-    <Route
-      {...rest}
-      render={props =>
-        login.user ? (
-          <AdminTemplate>
-            <Component {...props} />
-          </AdminTemplate>
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login"
-            }}
-          />
-        )
-      }
-    />
+    <>
+      {!login.requesting && (
+        <Route
+          {...rest}
+          render={props =>
+            login.user ? (
+              <AdminTemplate>
+                <Component {...props} />
+              </AdminTemplate>
+            ) : (
+              <Redirect
+                to={{
+                  pathname: "/login"
+                }}
+              />
+            )
+          }
+        />
+      )}
+    </>
   );
 }
 

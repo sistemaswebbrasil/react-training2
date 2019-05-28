@@ -1,4 +1,11 @@
-import { LOGIN_REQUESTING, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT_REQUESTING, LOGOUT_SUCCESS } from "./constants";
+import {
+  LOGIN_REQUESTING,
+  LOGIN_SUCCESS,
+  LOGIN_ERROR,
+  LOGOUT_REQUESTING,
+  LOGOUT_SUCCESS,
+  LOGIN_EXISTING
+} from "./constants";
 
 const initialState = {
   requesting: false,
@@ -17,6 +24,14 @@ const reducer = function loginReducer(state = initialState, action) {
         requesting: true,
         successful: false,
         messages: [{ body: "Logging in...", time: new Date() }],
+        errors: []
+      };
+
+    case LOGIN_EXISTING:
+      return {
+        requesting: true,
+        successful: false,
+        messages: [{ body: "Checking if logged...", time: new Date() }],
         errors: []
       };
 

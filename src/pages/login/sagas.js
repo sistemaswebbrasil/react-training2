@@ -41,6 +41,7 @@ function* fetchLogin(action) {
 
 function* fetchLogout(action) {
   yield put({ type: LOGOUT_SUCCESS });
+  yield call(logout);
   history.push("/login");
 }
 
@@ -55,6 +56,11 @@ function* isAuthenticated() {
       }
     });
   } catch (e) {
+    yield put({
+      type: LOGIN_ERROR,
+      message: "Not Logged",
+      status: 401
+    });
     yield call(logout);
   }
 }
