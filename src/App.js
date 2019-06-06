@@ -11,6 +11,7 @@ import SignUp from "./pages/signUp";
 import { isAuthenticated } from "./pages/login/actions";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
+import UserForm from "./pages/users/UserForm";
 
 class App extends Component {
   constructor(props) {
@@ -27,7 +28,8 @@ class App extends Component {
           <PublicRoute path="/sign-up" exact component={SignUp} />
           <PrivateRoute path="/" exact component={Home} />
           <PrivateRoute path="/about/" component={About} />
-          <PrivateRoute path="/users/" component={Users} />
+          <PrivateRoute path="/users/" exact component={Users} />
+          <PrivateRoute path="/users/:id/edit" component={UserForm} />
         </Switch>
       </div>
     );
