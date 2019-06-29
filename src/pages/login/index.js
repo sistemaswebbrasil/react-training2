@@ -32,7 +32,7 @@ class Login extends Component {
             <Image src={logo} /> Log-in to your account
           </Header>
           <Formik
-            initialValues={{ email: "teste@teste.com", password: "teste" }}
+            initialValues={{ email: "", password: "" }}
             validationSchema={validationSchema}
             onSubmit={async (values, { setErrors, isValid, resetForm }) => {
               this.props.loginRequest({ values, setErrors, isValid });

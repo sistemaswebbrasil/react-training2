@@ -1,43 +1,36 @@
 import * as types from "./constants";
 
-export const usersRequest = payload => {
+export const listUsers = payload => {
   return {
     type: types.USERS_REQUESTING,
     payload
   };
 };
 
-export const userEdit = payload => {
+export const getUser = payload => {
   return {
-    type: types.USER_EDIT,
+    type: types.USER_REQUESTING,
     payload
   };
 };
 
-export const userDelete = payload => {
+export const deleteUser = payload => {
   return {
-    type: types.USER_DELETE,
+    type: types.USER_DELETE_REQUESTING,
     payload
   };
 };
 
-export const saveRegister = payload => {
+export const saveUser = payload => {
   return {
-    type: types.USER_SAVE,
+    type: types.USER_SAVE_REQUESTING,
     payload
   };
 };
 
-export const findByUserNameRequest = payload => {
+export const changePassword = payload => {
   return {
-    type: types.IS_UNIQUE_EMAIL_REQUESTING,
-    payload
-  };
-};
-
-export const findByEmailRequest = payload => {
-  return {
-    type: types.IS_UNIQUE_EMAIL_REQUESTING,
+    type: types.CHANGE_PASSWORD_REQUESTING,
     payload
   };
 };

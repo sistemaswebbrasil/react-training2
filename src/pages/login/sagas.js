@@ -31,6 +31,7 @@ function* fetchLogin(action) {
   } catch (e) {
     const { response } = e;
     yield put({
+      
       type: LOGIN_ERROR,
       message: serverErrorsToFormErrors(response),
       status: response ? response.status : 503
@@ -39,7 +40,7 @@ function* fetchLogin(action) {
   }
 }
 
-function* fetchLogout(action) {
+function* fetchLogout() {
   yield put({ type: LOGOUT_SUCCESS });
   yield call(logout);
   history.push("/login");

@@ -8,7 +8,7 @@ import {
 } from "./constants";
 
 const initialState = {
-  requesting: false,
+  requesting: true,
   successful: false,
   messages: [],
   status: 200,

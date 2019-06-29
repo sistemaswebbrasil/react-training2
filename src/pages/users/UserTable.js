@@ -2,14 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Table, Icon, Button } from "semantic-ui-react";
 
-import { usersRequest, userEdit, userDelete } from "./actions";
+import { listUsers, deleteUser } from "./actions";
 import { Link } from "react-router-dom";
 
 export class UserTable extends Component {
   constructor(props) {
     super(props);
 
-    this.props.usersRequest();
+    this.props.listUsers();
   }
 
   render() {
@@ -58,7 +58,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = { usersRequest, userEdit, userDelete };
+const mapDispatchToProps = { listUsers, deleteUser };
 
 export default connect(
   mapStateToProps,
