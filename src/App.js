@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "semantic-ui-css/semantic.min.css";
+import "react-toastify/dist/ReactToastify.css";
 import { Switch } from "react-router-dom";
 import { connect } from "react-redux";
 
@@ -14,10 +15,12 @@ import PublicRoute from "./PublicRoute";
 import UserForm from "./pages/users/UserForm";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-
+  componentDidMount() {
     this.props.isAuthenticated();
+  }
+
+  componentDidCatch(error, info) {
+    console.warn(info);
   }
 
   render() {
@@ -30,6 +33,7 @@ class App extends Component {
           <PrivateRoute path="/about/" component={About} />
           <PrivateRoute path="/users/" exact component={Users} />
           <PrivateRoute path="/users/:id/edit" component={UserForm} />
+          <PrivateRoute path="/users/create" component={UserForm} />
         </Switch>
       </div>
     );
