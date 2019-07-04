@@ -30,16 +30,18 @@ const reducer = function loginReducer(state = initialState, action) {
         requesting: true,
         successful: false,
         messages: [{ body: "registering ...", time: new Date() }],
-        errors: []
+        errors: [],
+        userRegisterSucces: false
       };
 
     case REGISTER_SUCCESS:
       return {
         errors: [],
-        messages: [],
+        messages: "User Successfully Registered",
         requesting: false,
         successful: true,
-        user: action.user
+        user: action.user,
+        userRegisterSucces: true
       };
 
     case REGISTER_ERROR:
@@ -48,7 +50,8 @@ const reducer = function loginReducer(state = initialState, action) {
         messages: [],
         requesting: false,
         status: action.status,
-        successful: false
+        successful: false,
+        userRegisterSucces: false
       };
 
     case IS_UNIQUE_USERNAME_REQUESTING:

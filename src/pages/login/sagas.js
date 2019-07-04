@@ -25,13 +25,12 @@ function* fetchLogin(action) {
   const { setErrors, values } = action.payload;
   try {
     const { data } = yield call(loginApi, values);
-    yield put({ type: LOGIN_SUCCESS, user: data.user });
+    yield put({ type: LOGIN_SUCCESS, user: data });
     login(data.token);
     history.push("/");
   } catch (e) {
     const { response } = e;
     yield put({
-      
       type: LOGIN_ERROR,
       message: serverErrorsToFormErrors(response),
       status: response ? response.status : 503

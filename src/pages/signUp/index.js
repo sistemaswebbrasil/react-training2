@@ -4,6 +4,7 @@ import { Button, Form, Grid, Header, Image, Message, Segment } from "semantic-ui
 import { Link } from "react-router-dom";
 import { Formik } from "formik";
 import Yup from "yup";
+import { toast } from "react-toastify";
 
 import logo from "../../logo.png";
 import { registerRequest, findByUserNameRequest, findByEmailRequest } from "./actions";
@@ -23,10 +24,25 @@ const validationSchema = Yup.object().shape({
     .required("Password confirm is required")
 });
 
-class SignUp extends Component {
-  render() {
-    const { register } = this.props;
+toast.configure({
+  autoClose: 5000,
+  draggable: false
+});
 
+class SignUp extends Component {
+  componentDidUpdate(prevProps) {
+    if (this.props.register.userRegisterSucces === true && prevProps.register.userRegisterSucces === false) {
+      this.notify(this.props.register.messages);
+    }
+  }
+
+  notify = message => {
+    toast.success(message, {
+      position: toast.POSITION.TOP_CENTER
+    });
+  };
+
+  render() {
     return (
       <Grid textAlign="center" style={{ height: "100%" }} verticalAlign="middle">
         <Grid.Column style={{ maxWidth: 450 }}>
@@ -37,10 +53,10 @@ class SignUp extends Component {
           <Formik
             ref={el => (this.form = el)}
             initialValues={{
-              username: "",
-              email: "",
-              password: "",
-              passwordConfirm: ""
+              username: "aspcore",
+              email: "aspcore@teste.com",
+              password: "teste",
+              passwordConfirm: "teste"
             }}
             validationSchema={validationSchema}
             onSubmit={async (values, { setErrors, setStatus }) => {
@@ -73,7 +89,6 @@ class SignUp extends Component {
                     autoComplete="off"
                     onChange={e => {
                       const { value } = e.target;
-                      console.warn(value);
                       if (value.length >= 5) {
                         this.props.findByUserNameRequest({
                           value,
@@ -88,7 +103,16 @@ class SignUp extends Component {
                     }}
                     onBlur={e => {
                       const { value } = e.target;
-                      this.props.findByUserNameRequest({ value, setErrors, setFieldError, setStatus, errors, status });
+                      if (value.length >= 5) {
+                        this.props.findByUserNameRequest({
+                          value,
+                          setErrors,
+                          setFieldError,
+                          setStatus,
+                          errors,
+                          status
+                        });
+                      }
                     }}
                     value={values.username}
                     error={errors.username && touched.username}
@@ -118,7 +142,9 @@ class SignUp extends Component {
                     }}
                     onBlur={e => {
                       const { value } = e.target;
-                      this.props.findByEmailRequest({ value, setErrors, setStatus, errors, status });
+                      if (value.length >= 5) {
+                        this.props.findByEmailRequest({ value, setErrors, setStatus, errors, status });
+                      }
                     }}
                     value={values.email}
                     error={errors.email && touched.email}
@@ -159,16 +185,16 @@ class SignUp extends Component {
                   {errors.passwordConfirm && touched.passwordConfirm && (
                     <Message error content={errors.passwordConfirm} />
                   )}
-                  <Button color="teal" fluid size="large" type="submit" disabled={!isValid}>
+                  <Button color="teal" fluid size="large" type="submit" /*disabled={!isValid}*/>
                     Register
                   </Button>
                   {errors.general && <Message error header={errors.general.title} content={errors.general.message} />}
-                  {register.successful && (
+                  {/* {register.successful && (
                     <Message positive>
                       <Message.Header>Success</Message.Header>
                       <p>User Successfully Registered</p>
                     </Message>
-                  )}
+                  )} */}
                 </Segment>
               </Form>
             )}

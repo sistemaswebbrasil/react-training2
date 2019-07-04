@@ -1,5 +1,4 @@
 import { call, put, takeLatest, delay } from "redux-saga/effects";
-import _ from "lodash";
 
 import api from "../../services/api";
 import {
@@ -21,11 +20,11 @@ function registerApi(values) {
 }
 
 function isUniqueUsernameApi(values) {
-  return api.get(`username-exists/${values}`);
+  return api.get(`username-available/${values}`);
 }
 
 function isUniqueEmailApi(values) {
-  return api.get(`email-exists/${values}`);
+  return api.get(`email-available/${values}`);
 }
 
 function* fetchRegister(action) {
@@ -51,56 +50,86 @@ function* fetchFindByUserName(action) {
   const isNotUniqueMsg = { username: "This user name is already being used" };
   const { setStatus, value, status } = action.payload;
   try {
-    yield call(isUniqueUsernameApi, value);
-    yield put({
-      type: IS_UNIQUE_USERNAME_ERROR,
-      message: isNotUniqueMsg,
-      status: 422
-    });
-    yield call(setStatus, { ...status, ...isNotUniqueMsg });
-  } catch (e) {
-    const { response } = e;
-    if (response.status === 404) {
+    const {
+      data: { avaliable }
+    } = yield call(isUniqueUsernameApi, value);
+    if (avaliable === true) {
       yield put({ type: IS_UNIQUE_USERNAME_SUCCESS });
-      yield call(setStatus, _.omit(status, "username"));
+      yield call(setStatus, {});
     } else {
       yield put({
         type: IS_UNIQUE_USERNAME_ERROR,
-        message: serverErrorsToFormErrors(response),
-        status: response ? response.status : 503
+        message: isNotUniqueMsg,
+        status: 422
       });
-      yield call(setStatus, serverErrorsToFormErrors(response));
+      yield call(setStatus, { ...status, ...isNotUniqueMsg });
     }
+  } catch (e) {
+    const { response } = e;
+    yield put({
+      type: IS_UNIQUE_USERNAME_ERROR,
+      message: serverErrorsToFormErrors(response),
+      status: response ? response.status : 503
+    });
+    yield call(setStatus, serverErrorsToFormErrors(e.response));
   }
 }
 
 function* fetchFindByEmail(action) {
   const isNotUniqueMsg = { email: "This email is already being used" };
   const { setStatus, value, status } = action.payload;
-  const statusMsg = { ...status, ...isNotUniqueMsg };
   try {
-    yield call(isUniqueEmailApi, value);
-    yield call(setStatus, statusMsg);
-    yield put({
-      type: IS_UNIQUE_EMAIL_ERROR,
-      message: statusMsg,
-      status: 422
-    });
-  } catch (e) {
-    const { response } = e;
-    if (response.status === 404) {
+    const {
+      data: { avaliable }
+    } = yield call(isUniqueEmailApi, value);
+    if (avaliable === true) {
       yield put({ type: IS_UNIQUE_EMAIL_SUCCESS });
-      yield call(setStatus, _.omit(status, "email"));
+      yield call(setStatus, {});
     } else {
       yield put({
         type: IS_UNIQUE_EMAIL_ERROR,
-        message: serverErrorsToFormErrors(response),
-        status: response ? response.status : 503
+        message: isNotUniqueMsg,
+        status: 422
       });
-      yield call(setStatus, serverErrorsToFormErrors(response));
+      yield call(setStatus, { ...status, ...isNotUniqueMsg });
     }
+  } catch (e) {
+    const { response } = e;
+    yield put({
+      type: IS_UNIQUE_EMAIL_ERROR,
+      message: serverErrorsToFormErrors(response),
+      status: response ? response.status : 503
+    });
+    yield call(setStatus, serverErrorsToFormErrors(e.response));
   }
 }
+// function* fetchFindByEmail(action) {
+//   const isNotUniqueMsg = { email: "This email is already being used" };
+//   const { setStatus, value, status } = action.payload;
+//   const statusMsg = { ...status, ...isNotUniqueMsg };
+//   try {
+//     yield call(isUniqueEmailApi, value);
+//     yield call(setStatus, statusMsg);
+//     yield put({
+//       type: IS_UNIQUE_EMAIL_ERROR,
+//       message: statusMsg,
+//       status: 422
+//     });
+//   } catch (e) {
+//     const { response } = e;
+//     if (response.status === 404) {
+//       yield put({ type: IS_UNIQUE_EMAIL_SUCCESS });
+//       yield call(setStatus, _.omit(status, "email"));
+//     } else {
+//       yield put({
+//         type: IS_UNIQUE_EMAIL_ERROR,
+//         message: serverErrorsToFormErrors(response),
+//         status: response ? response.status : 503
+//       });
+//       yield call(setStatus, serverErrorsToFormErrors(response));
+//     }
+//   }
+// }
 
 function* sagas() {
   yield takeLatest(REGISTER_REQUESTING, fetchRegister);

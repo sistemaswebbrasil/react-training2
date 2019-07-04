@@ -32,7 +32,7 @@ class Login extends Component {
             <Image src={logo} /> Log-in to your account
           </Header>
           <Formik
-            initialValues={{ email: "", password: "" }}
+            initialValues={{ email: "teste@teste.com", password: "testes" }}
             validationSchema={validationSchema}
             onSubmit={async (values, { setErrors, isValid, resetForm }) => {
               this.props.loginRequest({ values, setErrors, isValid });
@@ -52,7 +52,7 @@ class Login extends Component {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.email}
-                    error={errors.email && touched.email}
+                    error={(errors.email || errors.unauthorized) && touched.email}
                   />
                   {errors.email && touched.email && <Message error content={errors.email} />}
                   <Form.Input
@@ -66,13 +66,16 @@ class Login extends Component {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.password}
-                    error={errors.password && touched.password}
+                    error={(errors.password || errors.unauthorized) && touched.password}
                   />
                   {errors.password && touched.password && <Message error content={errors.password} />}
                   <Button color="teal" fluid size="large" type="submit" /*disabled={!isValid && login.status < 500}*/>
                     Login
                   </Button>
                   {errors.general && <Message error header={errors.general.title} content={errors.general.message} />}
+                  {errors.unauthorized && (
+                    <Message error header={errors.unauthorized.title} content={errors.unauthorized.message} />
+                  )}
                 </Segment>
               </Form>
             )}
